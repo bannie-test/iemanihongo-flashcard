@@ -1,6 +1,6 @@
 /*
  * Ảnh nền theo buổi. Đặt ảnh (khuyên dùng .webp hoặc .jpg, ngang, ~2400×1350, dưới 600 KB)
- * vào website/assets/bg/ rồi ghi đường dẫn vào đây, ví dụ:
+ * vào assets/bg/ rồi ghi đường dẫn vào đây, ví dụ:
  *   sang: 'assets/bg/sang.webp',
  * Để trống ('') thì trang dùng tranh phong cảnh vẽ sẵn cho buổi đó.
  *

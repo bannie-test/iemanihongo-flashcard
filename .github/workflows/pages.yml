@@ -1,13 +1,12 @@
-name: Deploy website to GitHub Pages
+name: Deploy flashcard website to GitHub Pages
 
-# Đưa thư mục website/ lên GitHub Pages mỗi khi nhánh mặc định có thay đổi trong website/.
-# Cần bật một lần: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Mỗi lần đẩy lên develop (hoặc main), kiểm tra code rồi đưa trang web lên GitHub Pages.
+# Cần bật một lần: Settings → Pages → Build and deployment → Source: GitHub Actions,
+# và cho phép nhánh develop ở Settings → Environments → github-pages → Deployment branches.
 
 on:
   push:
-    paths:
-      - 'website/**'
-      - '.github/workflows/pages.yml'
+    branches: [develop, main]
   workflow_dispatch:
 
 permissions:
@@ -20,24 +19,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the site's scripts parse
+        run: for f in *.js data/*.js; do node --check "$f"; done
+
+      # Chỉ đưa các file của trang web lên, không kèm tool/, README, .github/.
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp -r index.html styles.css app.js scene.js painter.js data assets _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
   deploy:
-    # Chỉ triển khai từ nhánh mặc định (hoặc khi chạy tay).
-    if: github.event_name == 'workflow_dispatch' || github.ref_name == github.event.repository.default_branch
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/configure-pages@v5
-
-      - name: Check the site's scripts parse
-        run: for f in website/*.js website/data/*.js; do node --check "$f"; done
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: website
-
       - id: deployment
         uses: actions/deploy-pages@v4

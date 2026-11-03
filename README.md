@@ -1,4 +1,4 @@
-# Iemanihongo · Trang web từ vựng
+# Iemanihongo Flashcard
 
 Trang web tĩnh học từ vựng tiếng Nhật theo chủ đề. Không cần đăng nhập, không cần tài khoản.
 
@@ -16,19 +16,19 @@ Trang web tĩnh học từ vựng tiếng Nhật theo chủ đề. Không cần 
 ## Chạy thử
 
 ```bash
-cd website && python3 -m http.server 8000
+python3 -m http.server 8000
 ```
 
-Rồi mở http://localhost:8000. Có thể đưa nguyên thư mục `website/` lên GitHub Pages, Netlify hoặc bất kỳ hosting tĩnh nào.
+Chạy ở thư mục gốc repo, rồi mở http://localhost:8000. Không cần cài đặt hay build gì.
 
 ## Ảnh nền anime
 
 Khi chưa có ảnh, trang tự vẽ một bức tranh phong cảnh (núi Phú Sĩ, tháp chùa, mặt hồ, cành phong) cho từng buổi.
 Để dùng ảnh anime của riêng bạn:
 
-1. Đặt ảnh vào `website/assets/bg/`, ví dụ `sang.webp`, `chieu.webp`, `khuya.webp`
+1. Đặt ảnh vào `assets/bg/`, ví dụ `sang.webp`, `chieu.webp`, `khuya.webp`
    (ảnh ngang, khoảng 2400×1350, nên dưới 600 KB; phần giữa ảnh sẽ bị thẻ che nên chọn ảnh có cảnh đẹp ở hai bên).
-2. Ghi đường dẫn vào `website/data/backgrounds.js`:
+2. Ghi đường dẫn vào `data/backgrounds.js`:
 
 ```js
 window.BACKGROUNDS = { sang: 'assets/bg/sang.webp', chieu: 'assets/bg/chieu.webp', khuya: 'assets/bg/khuya.webp' };
@@ -38,9 +38,15 @@ Buổi nào để trống thì vẫn dùng tranh vẽ. Hãy dùng ảnh bạn c�
 
 ## Đưa lên GitHub Pages
 
-Workflow `.github/workflows/pages.yml` tự đưa thư mục `website/` lên GitHub Pages mỗi khi nhánh mặc định có thay đổi trong `website/`
-(hoặc chạy tay ở tab **Actions → Deploy website to GitHub Pages → Run workflow**). Chỉ cần bật một lần:
-**Settings → Pages → Build and deployment → Source: GitHub Actions**. Địa chỉ trang sẽ là `https://<tên-tài-khoản>.github.io/<tên-repo>/`.
+Workflow `.github/workflows/pages.yml` chạy mỗi khi đẩy lên `develop` hoặc `main` (hoặc chạy tay ở tab **Actions**):
+kiểm tra các file JS, gom các file của trang (`index.html`, `*.js`, `styles.css`, `data/`, `assets/`) rồi đưa lên GitHub Pages.
+
+Cần bật một lần:
+
+1. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. **Settings → Environments → github-pages → Deployment branches**: thêm `develop` (mặc định chỉ nhánh `main` được deploy).
+
+Địa chỉ trang: `https://bannie-test.github.io/iemanihongo-flashcard/`.
 
 ## Dữ liệu
 
@@ -50,5 +56,8 @@ Workflow `.github/workflows/pages.yml` tự đưa thư mục `website/` lên Git
 ```bash
 python3 tool/build_web_chars.py
 ```
+
+Nét chữ của chữ mới được tải từ KanjiVG. Muốn có cả âm Hán Việt và nghĩa cho chữ Hán mới, truyền thêm file `kanji.json`
+của app Iemanihongo: `python3 tool/build_web_chars.py path/to/kanji.json`.
 
 Nét chữ lấy từ [KanjiVG](https://kanjivg.tagaini.net/) (CC BY-SA 3.0).
